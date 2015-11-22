@@ -1,0 +1,36 @@
+"*":
+  editor:
+    softWrap: true
+    invisibles: {}
+  core:
+    ignoredNames: [
+      ".git"
+      ".svn"
+      ".DS_Store"
+    ]
+    disabledPackages: [
+      "whitespace"
+    ]
+  "exception-reporting":
+    userId: "fbc6005b-7654-2f7c-d088-af8cb8f823d8"
+  "release-notes":
+    viewedVersion: "0.95.0"
+  welcome:
+    showOnStartup: false
+  metrics:
+    userId: "b31b34278d9ce8917c5fa12ed99d643f95575e60"
+  "tree-view":
+    hideVcsIgnoredFiles: true
+  "vim-mode": {}
+  "seeing-is-believing":
+    "ruby-command": "/Users/blake/Code/dotfiles/bin/sib_ruby"
+    flags: [
+      "--alignment-strategy"
+      "chunk"
+      "--number-of-captures"
+      "300"
+      "--line-length"
+      "1000"
+      "--timeout"
+      "12"
+    ]
