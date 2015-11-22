@@ -1,5 +1,5 @@
 # dotfiles
 miscellaneous configuration files
 
-# setup
+### setup
 `$ ln <source (config file in repo)> <target (config file in home dir)>`
