@@ -17,6 +17,7 @@ let g:airline_theme='simple'
 
 set tabstop=2 shiftwidth=2 expandtab
 set clipboard+=unnamedplus
+set nu
 
 if executable('ag')
   set grepprg=ag\ --nogroup\ --nocolor
