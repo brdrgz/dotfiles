@@ -10,6 +10,8 @@ Plug 'tpope/vim-rails'
 Plug 'tpope/vim-fugitive'
 Plug 'epmatsw/ag.vim'
 Plug 'ctrlpvim/ctrlp.vim'
+Plug 'scrooloose/nerdtree'
+Plug 'Xuyuanp/nerdtree-git-plugin'
 call plug#end()
 
 colorscheme molokai
@@ -26,3 +28,6 @@ endif
 
 " search with Ag
 noremap <leader>a :Ag<space>
+
+" highlight color
+hi Search ctermbg=Gray
