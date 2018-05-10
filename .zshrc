@@ -40,4 +40,8 @@ setopt prompt_subst
 
 autoload -U colors && colors
 
-PROMPT="%{$fg_bold[cyan]%}%n%{$reset_color%} %{$fg_bold[green]%}%M%{$reset_color%} %{$fg_bold[red]%}%~%{$reset_color%} ${vcs_info_msg_0_} %{$fg_bold[white]%}$%{$reset_color%} "
+prompt () {
+  PROMPT="%{$fg_bold[cyan]%}%n%{$reset_color%} %{$fg_bold[green]%}%M%{$reset_color%} %{$fg_bold[red]%}%~%{$reset_color%} ${vcs_info_msg_0_} %{$fg_bold[white]%}$%{$reset_color%} "
+}
+
+precmd_functions+=(prompt)
