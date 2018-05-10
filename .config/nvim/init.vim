@@ -31,3 +31,6 @@ noremap <leader>a :Ag<space>
 
 " highlight color
 hi Search ctermbg=Gray
+
+" relative line-numbering
+set relativenumber
