@@ -1,0 +1,246 @@
+;;; init.el --- Initialization file for Emacs.
+;;; Commentary:
+;; Emacs Startup File --- initialization for Emacs
+
+;;; Code:
+(require 'package)
+(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
+(add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/"))
+(package-initialize)
+
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
+
+;; use-package
+(eval-when-compile
+  (require 'use-package))
+
+;; use-package configurations
+(use-package auto-package-update
+  :ensure t
+  :config
+  (setq auto-package-update-delete-old-versions t)
+  (auto-package-update-maybe))
+
+(use-package evil
+  :ensure t
+  :init
+  (setq evil-want-keybinding nil)
+  :config
+  (evil-mode 1)
+  (defalias #'forward-evil-WORD #'forward-evil-symbol))
+
+(use-package evil-collection
+  :after evil
+  :ensure t
+  :config
+  (evil-collection-init))
+
+(use-package magit
+  :after (evil)
+  :ensure t
+  :bind ("C-x g" . magit-status)
+  :config
+  (global-magit-file-mode))
+
+(use-package evil-magit
+  :after (evil magit)
+  :ensure t)
+
+(use-package evil-surround
+  :ensure t
+  :after evil
+  :config
+  (global-evil-surround-mode 1))
+
+(use-package projectile
+  :ensure t
+  :bind-keymap
+  ("C-c p" . projectile-command-map)
+  :config
+  (projectile-mode)
+  (projectile-tags-exclude-patterns)
+  (setq projectile-switch-project-action 'shell1))
+
+(use-package ace-window
+  :ensure t
+  :bind ("M-o" . ace-window)
+  :config
+  (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+  ;; (setq aw-background nil)
+  )
+
+(use-package flycheck
+  :ensure t
+  :hook
+  (ruby-mode . (lambda ()
+                 (setq-local flycheck-command-wrapper-function
+                             (lambda (command)
+                               (append '("bundle" "exec") command)))))
+  :config
+  (global-flycheck-mode))
+
+(use-package restclient
+  :ensure t
+  :config
+  (setq restclient-inhibit-cookies t))
+
+(use-package ivy
+  :ensure t
+  :bind
+  (("C-c s" . counsel-ag)
+   ("C-s"   . swiper))
+  :config
+  (ivy-mode 1)
+  (setq ivy-height 20)
+  (setq ivy-use-virtual-buffers t)
+  (setq ivy-count-format "(%d/%d) ")
+  (setq ivy-re-builders-alist
+	'((swiper . ivy--regex-plus)
+	  (counsel-ag . ivy--regex-plus)
+	  (t . ivy--regex-fuzzy)))
+  (setq projectile-completion-system 'ivy)
+  (setq magit-completing-read-function 'ivy-completing-read)
+  (setq counsel-rg-base-command "rg -S -M 512 --no-heading --line-number --color never %s .")
+  (setq counsel-ag-base-command "ag -W 256 --nocolor --nogroup %s"))
+
+(use-package counsel
+  :ensure t
+  :after ivy
+  :config
+  (counsel-mode))
+
+(use-package elixir-mode
+  :ensure t
+  :hook
+  (elixir-mode . (lambda ()
+                   (setq column-enforce-column 80)
+                   (column-enforce-mode))))
+
+(use-package flyspell
+  :ensure t
+  :hook
+  (text-mode . flyspell-mode)
+  (html-mode . (lambda() (flyspell-mode -1))))
+
+(use-package evil-org
+  :ensure t
+  :after evil
+  :hook (org-mode . evil-org-mode))
+
+(use-package string-inflection :ensure t)
+
+(use-package ag
+  :ensure t
+  :hook (ag-mode . wgrep-ag-setup)
+  :config
+  (setq ag-highlight-search t)
+  (setq ag-arguments (cons "-W 256" ag-arguments)))
+
+(use-package json-mode
+  :ensure t
+  :hook (json-mode . (lambda()(setq js-indent-level 2))))
+
+(use-package rjsx-mode
+  :ensure t
+  :after column-enfore-mode
+  :hook (js2-mode . (lambda()
+		      (company-mode)
+		      (display-line-numbers-mode)
+		      (setq column-enforce-column 80)
+		      (column-enforce-mode t)))
+  :config
+  (add-to-list 'auto-mode-alist '("\\.js\\'" . rjsx-mode))
+  (setq js-indent-level 2))
+
+(use-package rubocop :ensure t)
+
+(use-package column-enforce-mode
+  :ensure t
+  :hook (prog-mode . column-enforce-mode)
+  :config
+  (setq column-enforce-mode-column 80))
+
+(use-package ws-butler
+  :ensure t
+  :config
+  (ws-butler-global-mode))
+
+(use-package org-present
+  :ensure t
+  :after evil
+  :hook
+  ((org-present-mode . (lambda ()
+			      (evil-mode 0)
+			      (hide-mode-line-mode 1)
+			      (org-present-big)
+			      (org-display-inline-images)
+			      (org-present-hide-cursor)
+			      (org-present-read-only)))
+  (org-present-mode-quit . (lambda ()
+			     (evil-mode 1)
+			     (hide-mode-line-mode 0)
+			     (org-present-small)
+			     (org-remove-inline-images)
+			     (org-present-show-cursor)
+			     (org-present-read-write)))))
+
+(use-package yaml-mode :ensure t)
+
+(use-package zenburn-theme
+  :ensure t
+  :config (load-theme 'zenburn t))
+
+
+(use-package exec-path-from-shell
+  :ensure t
+  :config
+  (when (memq window-system '(mac ns x))
+    (exec-path-from-shell-initialize)))
+
+(use-package gnutls
+  :ensure t
+  :config
+  (add-to-list 'gnutls-trustfiles "/usr/local/etc/openssl/cert.pem"))
+
+(use-package yari :ensure t)
+
+(use-package midnight)
+
+(use-package markdown-mode :ensure t)
+
+
+;; Miscellaneous
+
+(defun shell1 () "Switch to or create *shell-1."
+       (interactive) (shell "*shell-1*"))
+(defun shell2 () "Switch to or create *shell-2."
+       (interactive) (shell "*shell-2*"))
+(defun shell3 () "Switch to or create *shell-3."
+       (interactive) (shell "*shell-3*"))
+(defun shell4 () "Switch to or create *shell-4."
+       (interactive) (shell "*shell-4*"))
+
+(global-set-key (kbd "C-1") 'shell1)
+(global-set-key (kbd "C-2") 'shell2)
+(global-set-key (kbd "C-3") 'shell3)
+(global-set-key (kbd "C-4") 'shell4)
+(global-set-key (kbd "C-c 1") 'shell1)
+(global-set-key (kbd "C-c 2") 'shell2)
+(global-set-key (kbd "C-c 3") 'shell3)
+(global-set-key (kbd "C-c 4") 'shell4)
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (markdown-mode yari exec-path-from-shell zenburn-theme yaml-mode org-present ws-butler column-enforce-mode rubocop rjsx-mode json-mode ag string-inflection evil-org elixir-mode counsel ivy restclient flycheck ace-window projectile evil-surround evil-magit magit evil-collection evil auto-package-update use-package))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
